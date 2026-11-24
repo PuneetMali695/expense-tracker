@@ -149,7 +149,7 @@ function render() {
   $("monthSelect").innerHTML = `<option value="all">All Months</option>` + months.map(m => `<option value="${m}">${fmtMonth(m)}</option>`).join("");
   $("monthSelect").value = selectedMonth;
 
-  // Sync Add-Transaction category dropdown (base + user's custom categories, "Others" last)
+   // Sync Add-Transaction category dropdown (base + user's custom categories grouped)
   const prevCat = $("category").value;
   const customCats = [...new Set(
     transactions
@@ -157,14 +157,13 @@ function render() {
       .filter(c => c && c !== "Income" && !BASE_CATS.includes(c))
   )];
   $("category").innerHTML = `<option value="" disabled selected>Select Category</option>`;
-  BASE_CATS.filter(c => c !== "Others").forEach(c => $("category").appendChild(new Option(c, c)));
+  BASE_CATS.forEach(c => $("category").appendChild(new Option(c, c)));
   if (customCats.length) {
     const grp = document.createElement("optgroup");
     grp.label = "Custom (Others)";
     customCats.forEach(c => grp.appendChild(new Option(c, c)));
     $("category").appendChild(grp);
   }
-  $("category").appendChild(new Option("Others", "Others"));
   const validCats = [...BASE_CATS, ...customCats];
   $("category").value = validCats.includes(prevCat) ? prevCat : "";
 
