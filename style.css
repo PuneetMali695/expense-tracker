@@ -1,0 +1,185 @@
+:root {
+  --bg: #f1f5f4;
+  --card: #ffffff;
+  --text: #1c2b2a;
+  --muted: #6b7d7b;
+  --line: #dce5e3;
+  --accent: #0f766e;
+  --income: #15803d;
+  --expense: #c2410c;
+  --savings: #7c3aed;
+}
+ 
+*{
+	box-sizing:border-box;
+	margin:0;
+	padding:0;
+}
+
+body{
+	font-family:"Segoe UI",system-ui, Arial, sans-serif;
+	background:var(--bg);
+	color:var(--text);
+	line-height:1.5;
+}
+
+.app{
+	max-width:1000px;
+	margin:0 auto;	
+	padding:24px 16px 48px;
+}
+
+header{
+	margin-bottom:20px;
+}
+
+header h1{
+	font-size:1.9rem; 
+}
+
+header p{
+	color:var(--muted);
+}
+
+/*Summary Boxes*/
+.summary{
+	display:grid;
+	grid-template-columns:repeat(4,1fr);
+	gap:12px;
+	margin-bottom:20px;
+}
+
+.box{
+	background:var(--card);
+	border-radius:10px;
+	padding:14px;
+	border-top:4px solid var(--accent);
+}
+
+.box span{
+	display:block;
+	color:var(--muted);
+	font-size:0.85rem;
+}
+.box strong { font-size: 1.3rem; }
+.box.income { border-top-color: var(--income); }
+.box.expense { border-top-color: var(--expense); }
+.box.savings { border-top-color: var(--savings); }
+.box.income strong { color: var(--income); }
+.box.expense strong { color: var(--expense); }
+.box.savings strong { color: var(--savings); }
+
+/* Cards */
+.card {
+  background: var(--card);
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+.card h2 { 
+	font-size: 1.15rem; 
+	margin-bottom: 12px; 
+}
+
+/* Charts */
+.charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.chart-box {
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+/* Form */
+form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+input, select {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #fff;
+  color: var(--text);
+}
+input:focus, select:focus, button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+#title, #submitBtn { 
+	grid-column: 1 / -1; 
+}
+
+button {
+  padding: 11px;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button:hover { 
+	background: #0b5d57;
+}
+
+/* List */
+.list-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.list-head h2 { 
+	margin: 0; 
+}
+
+ul { 
+  list-style: none; 
+}
+
+li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+li:last-child { border-bottom: none; }
+.info { flex: 1; }
+.info strong { display: block; }
+.info small { color: var(--muted); }
+.amt { font-weight: 600; }
+.amt.income { color: var(--income); }
+.amt.expense { color: var(--expense); }
+
+.del {
+  background: transparent;
+  color: var(--muted);
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+}
+
+.del:hover { background: #fee2e2; color: #b91c1c; }
+
+.empty { color: var(--muted); padding: 16px 0; text-align: center; }
+.clear { display:block;margin: 12px auto 0;background: #fff; color: #b91c1c; border: 1px solid #fca5a5; }
+.clear:hover { background: #fee2e2; }
+
+/* Phones and small screens */
+@media (max-width: 700px) {
+  .summary { grid-template-columns: 1fr 1fr; }
+  .charts { grid-template-columns: 1fr; }
+  form { grid-template-columns: 1fr; }
+}
