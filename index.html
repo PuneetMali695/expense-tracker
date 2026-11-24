@@ -44,15 +44,15 @@
           <option value="expense">Expense</option>
           <option value="income">Income</option>
         </select>
-        <select id="category" aria-label="Category">
-          <option>Food</option>
-          <option>Travel</option>
-          <option>Shopping</option>
-          <option>Bills</option>
-          <option>Entertainment</option>
-          <option>Salary</option>
-          <option>Others</option>
-        </select>
+			<select id="category" aria-label="Category" required>
+			  <option value="" disabled selected>Select Category</option>
+			  <option>Food</option>
+			  <option>Travel</option>
+			  <option>Shopping</option>
+			  <option>Bills</option>
+			  <option>Entertainment</option>
+			  <option>Others</option>
+			</select>
         <input type="text" id="customCat" placeholder="Enter custom category" hidden>
         <input type="date" id="date" required>
         <button type="submit" id="submitBtn">Add Transaction</button>
