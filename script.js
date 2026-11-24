@@ -63,12 +63,16 @@ $("clearAll").addEventListener("click", () => {
 
 // CSV export
 $("exportCsv").addEventListener("click", () => {
-  const rows = selectedMonth === "all" ? transactions : transactions.filter(t => t.date.startsWith(selectedMonth));
+  const rows = (selectedMonth === "all" ? transactions : transactions.filter(t => t.date.startsWith(selectedMonth)))
+    .slice()
+    .sort((a, b) => a.date.localeCompare(b.date) || a.id - b.id);
   if (!rows.length) return alert("No transactions to export for this period.");
+  let runningBalance = 0;
   const esc = v => `"${String(v).replace(/"/g, '""')}"`;
-  const csv = ["Date,Title,Category,Type,Amount", ...rows.map(t =>
-    [t.date, t.title, t.category, t.type, t.amount.toFixed(2)].map(esc).join(",")
-  )].join("\n");
+  const csv = ["Date,Title,Category,Type,Amount,Balance", ...rows.map(t => {
+    runningBalance += t.type === "income" ? t.amount : -t.amount;
+    return [t.date, t.title, t.category, t.type, t.amount.toFixed(2), runningBalance.toFixed(2)].map(esc).join(",");
+  })].join("\n");
   const a = Object.assign(document.createElement("a"), {
     href: URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" })),
     download: `expenses-${selectedMonth}.csv`
@@ -76,7 +80,6 @@ $("exportCsv").addEventListener("click", () => {
   a.click();
   URL.revokeObjectURL(a.href);
 });
-
 const barPctPlugin = {
   id: "barPct",
   afterDatasetsDraw(chart) {
