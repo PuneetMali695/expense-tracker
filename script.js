@@ -20,7 +20,7 @@ $("date").value = today();
 $("category").addEventListener("change", () => {
   const isOthers = $("category").value === "Others";
   $("customCat").hidden = !isOthers;
-  $("customCat").required = isOthers;
+
   if (isOthers) $("customCat").focus();
   else $("customCat").value = "";
 });
@@ -149,9 +149,21 @@ function render() {
   $("monthSelect").innerHTML = `<option value="all">All Months</option>` + months.map(m => `<option value="${m}">${fmtMonth(m)}</option>`).join("");
   $("monthSelect").value = selectedMonth;
 
+  // Sync Add-Transaction category dropdown (base + user's custom categories, "Others" last)
+  const prevCat = $("category").value;
+  const customCats = [...new Set(
+    transactions
+      .map(t => t.category)
+      .filter(c => c && c !== "Income" && !BASE_CATS.includes(c))
+  )];
+  const formCats = [...BASE_CATS.filter(c => c !== "Others"), ...customCats, "Others"];
+  $("category").innerHTML = `<option value="" disabled selected>Select Category</option>`;
+  formCats.forEach(c => $("category").appendChild(new Option(c, c)));
+  $("category").value = formCats.includes(prevCat) ? prevCat : "";
+
   // Sync category filter options (preserving selection if still valid)
   const prevFilter = $("filter").value;
-  const allCats = [...new Set([...BASE_CATS.filter(c => c !== "Others"), ...transactions.map(t => t.category)])];
+  const allCats = [...new Set([...BASE_CATS.filter(c => c !== "Others"), ...customCats])];
   $("filterCats").innerHTML = "";
   allCats.forEach(c => $("filterCats").appendChild(new Option(c, `cat:${c}`)));
   $("filter").value = [...$("filter").options].some(o => o.value === prevFilter) ? prevFilter : "all";
