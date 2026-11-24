@@ -156,10 +156,17 @@ function render() {
       .map(t => t.category)
       .filter(c => c && c !== "Income" && !BASE_CATS.includes(c))
   )];
-  const formCats = [...BASE_CATS.filter(c => c !== "Others"), ...customCats, "Others"];
   $("category").innerHTML = `<option value="" disabled selected>Select Category</option>`;
-  formCats.forEach(c => $("category").appendChild(new Option(c, c)));
-  $("category").value = formCats.includes(prevCat) ? prevCat : "";
+  BASE_CATS.filter(c => c !== "Others").forEach(c => $("category").appendChild(new Option(c, c)));
+  if (customCats.length) {
+    const grp = document.createElement("optgroup");
+    grp.label = "Custom (Others)";
+    customCats.forEach(c => grp.appendChild(new Option(c, c)));
+    $("category").appendChild(grp);
+  }
+  $("category").appendChild(new Option("Others", "Others"));
+  const validCats = [...BASE_CATS, ...customCats];
+  $("category").value = validCats.includes(prevCat) ? prevCat : "";
 
   // Sync category filter options (preserving selection if still valid)
   const prevFilter = $("filter").value;
