@@ -80,6 +80,7 @@ $("exportCsv").addEventListener("click", () => {
   a.click();
   URL.revokeObjectURL(a.href);
 });
+
 const barPctPlugin = {
   id: "barPct",
   afterDatasetsDraw(chart) {
