@@ -128,7 +128,7 @@ li:last-child { border-bottom: none; }
   .charts, form { grid-template-columns: 1fr; }
   .list-head { flex-direction: column; align-items: stretch; }
   .controls { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
-  .controls input { grid-column: 1 / -1; min-width: 0; }
+  .controls input, #sort { grid-column: 1 / -1; min-width: 0; }
   .controls select { width: 100%; min-width: 0; }
   .info { min-width: 0; overflow-wrap: anywhere; }
 }
