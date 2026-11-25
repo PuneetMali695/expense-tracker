@@ -44,16 +44,9 @@
           <option value="expense">Expense</option>
           <option value="income">Income</option>
         </select>
-			<select id="category" aria-label="Category" required>
-			  <option value="" disabled selected>Select Category</option>
-			  <option>Food</option>
-			  <option>Travel</option>
-			  <option>Shopping</option>
-			  <option>Bills</option>
-			  <option>Entertainment</option>
-			  <option>Salary</option>
-			  <option>Others</option>
-			</select>
+        <select id="category" aria-label="Category" required>
+          <option value="" disabled selected>Select Category</option>
+        </select>
         <input type="text" id="customCat" placeholder="Custom category (optional)" hidden>
         <input type="date" id="date" required>
         <button type="submit" id="submitBtn">Add Transaction</button>
@@ -82,13 +75,13 @@
         <h2>History</h2>
         <div class="controls">
           <input type="search" id="search" placeholder="Search...">
-          <select id="filter" aria-label="Filter by type or category">
-            <option value="all">All</option>
-            <optgroup label="Type">
-              <option value="type:income">Income</option>
-              <option value="type:expense">Expense</option>
-            </optgroup>
-            <optgroup label="Category" id="filterCats"></optgroup>
+          <select id="filterType" aria-label="Filter by type">
+            <option value="all">All Types</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+          <select id="filterCat" aria-label="Filter by category">
+            <option value="all">All Categories</option>
           </select>
           <select id="sort" aria-label="Sort by amount">
             <option value="">Sort</option>
