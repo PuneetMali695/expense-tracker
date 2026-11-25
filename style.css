@@ -83,7 +83,7 @@ select:disabled {
   cursor: not-allowed;
   background: rgba(226, 232, 240, 0.7);
 }
-#title, #submitBtn, #customCat { grid-column: 1 / -1; }
+#type, #category, #customCat, #title, #submitBtn { grid-column: 1 / -1; }
 
 button { padding: 10px 14px; border: none; border-radius: 8px; background: var(--accent); color: #fff; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: 0.15s; }
 button:hover { background: #0b5d57; }
