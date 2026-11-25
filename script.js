@@ -1,5 +1,8 @@
 const $ = id => document.getElementById(id);
-const BASE_CATS = ["Food", "Travel", "Shopping", "Bills", "Entertainment", "Salary", "Others"];
+const CATS = {
+  expense: ["Food", "Travel", "Shopping", "Bills", "Entertainment", "Others"],
+  income: ["Salary", "Pocket Money", "Freelance", "Business", "Bonus", "Others"]
+};
 const today = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
 const curMonth = today().slice(0, 7);
 const money = n => `${n < 0 ? "-" : ""}₹${Math.abs(n).toFixed(2)}`;
@@ -16,11 +19,69 @@ const save = () => localStorage.setItem("transactions", JSON.stringify(transacti
 
 $("date").value = today();
 
-// Dynamic custom category input for "Others"
+function getCategories(type) {
+  const base = CATS[type];
+  const custom = [...new Set(
+    transactions
+      .filter(t => t.type === type && t.category && t.category !== "Income" && !base.includes(t.category))
+      .map(t => t.category)
+  )];
+  return { base, custom, all: [...base, ...custom] };
+}
+
+function syncCategoryOptions(keepSelection = true) {
+  const type = $("type").value;
+  const prevCat = keepSelection ? $("category").value : "";
+  const { base, custom, all } = getCategories(type);
+
+  $("category").innerHTML = `<option value="" disabled selected>Select Category</option>`;
+  base.forEach(c => $("category").appendChild(new Option(c, c)));
+  if (custom.length) {
+    const grp = document.createElement("optgroup");
+    grp.label = "Custom (Others)";
+    custom.forEach(c => grp.appendChild(new Option(c, c)));
+    $("category").appendChild(grp);
+  }
+  $("category").value = all.includes(prevCat) ? prevCat : "";
+
+  const isOthers = $("category").value === "Others";
+  $("customCat").hidden = !isOthers;
+  if (!isOthers) $("customCat").value = "";
+}
+
+function syncHistoryFilter(keepSelection = true) {
+  const fType = $("filterType").value;
+  const prevCat = keepSelection ? $("filterCat").value : "all";
+
+  $("filterCat").innerHTML = `<option value="all">All Categories</option>`;
+
+  if (fType === "all") {
+    [["expense", "Expense Categories"], ["income", "Income Categories"]].forEach(([type, label]) => {
+      const { base, custom } = getCategories(type);
+      const grp = document.createElement("optgroup");
+      grp.label = label;
+      [...base, ...custom].forEach(c => grp.appendChild(new Option(c, `typecat:${type}:${c}`)));
+      $("filterCat").appendChild(grp);
+    });
+  } else {
+    const { base, custom } = getCategories(fType);
+    base.forEach(c => $("filterCat").appendChild(new Option(c, `typecat:${fType}:${c}`)));
+    if (custom.length) {
+      const grp = document.createElement("optgroup");
+      grp.label = "Custom (Others)";
+      custom.forEach(c => grp.appendChild(new Option(c, `typecat:${fType}:${c}`)));
+      $("filterCat").appendChild(grp);
+    }
+  }
+
+  $("filterCat").value = [...$("filterCat").options].some(o => o.value === prevCat) ? prevCat : "all";
+}
+
+// Switch categories when Type changes & toggle custom category input on "Others"
+$("type").addEventListener("change", () => syncCategoryOptions(false));
 $("category").addEventListener("change", () => {
   const isOthers = $("category").value === "Others";
   $("customCat").hidden = !isOthers;
-
   if (isOthers) $("customCat").focus();
   else $("customCat").value = "";
 });
@@ -40,8 +101,6 @@ $("form").addEventListener("submit", e => {
   selectedMonth = $("date").value.slice(0, 7);
   save();
   $("form").reset();
-  $("customCat").hidden = true;
-  $("customCat").required = false;
   $("date").value = today();
   render();
 });
@@ -49,7 +108,8 @@ $("form").addEventListener("submit", e => {
 // Month selector, search, filter & sort
 $("monthSelect").addEventListener("change", e => { selectedMonth = e.target.value; render(); });
 $("search").addEventListener("input", render);
-$("filter").addEventListener("change", render);
+$("filterType").addEventListener("change", () => { syncHistoryFilter(false); render(); });
+$("filterCat").addEventListener("change", render);
 $("sort").addEventListener("change", render);
 
 // Clear all
@@ -144,35 +204,14 @@ function updateCharts(items, income, expense) {
 }
 
 function render() {
-  // Populate month dropdown (All Months + recorded months + current/selected)
+  // Populate month dropdown
   const months = [...new Set([curMonth, ...transactions.map(t => t.date.slice(0, 7)), ...(selectedMonth === "all" ? [] : [selectedMonth])])].sort().reverse();
   $("monthSelect").innerHTML = `<option value="all">All Months</option>` + months.map(m => `<option value="${m}">${fmtMonth(m)}</option>`).join("");
   $("monthSelect").value = selectedMonth;
 
-   // Sync Add-Transaction category dropdown (base + user's custom categories grouped)
-  const prevCat = $("category").value;
-  const customCats = [...new Set(
-    transactions
-      .map(t => t.category)
-      .filter(c => c && c !== "Income" && !BASE_CATS.includes(c))
-  )];
-  $("category").innerHTML = `<option value="" disabled selected>Select Category</option>`;
-  BASE_CATS.forEach(c => $("category").appendChild(new Option(c, c)));
-  if (customCats.length) {
-    const grp = document.createElement("optgroup");
-    grp.label = "Custom (Others)";
-    customCats.forEach(c => grp.appendChild(new Option(c, c)));
-    $("category").appendChild(grp);
-  }
-  const validCats = [...BASE_CATS, ...customCats];
-  $("category").value = validCats.includes(prevCat) ? prevCat : "";
-
-  // Sync category filter options (preserving selection if still valid)
-  const prevFilter = $("filter").value;
-  const allCats = [...new Set([...BASE_CATS.filter(c => c !== "Others"), ...customCats])];
-  $("filterCats").innerHTML = "";
-  allCats.forEach(c => $("filterCats").appendChild(new Option(c, `cat:${c}`)));
-  $("filter").value = [...$("filter").options].some(o => o.value === prevFilter) ? prevFilter : "all";
+  // Sync Add-Transaction and History dropdowns
+  syncCategoryOptions(true);
+  syncHistoryFilter(true);
 
   // Monthly slice & KPIs
   const monthTx = selectedMonth === "all" ? transactions : transactions.filter(t => t.date.startsWith(selectedMonth));
@@ -191,11 +230,18 @@ function render() {
 
   // Filter, search & sort history
   const q = $("search").value.trim().toLowerCase();
-  const f = $("filter").value;
+  const fType = $("filterType").value;
+  const fCat = $("filterCat").value;
   let shown = monthTx.filter(t => {
-    const matchF = f === "all" || (f.startsWith("type:") ? t.type === f.slice(5) : t.category === f.slice(4));
+    const matchType = fType === "all" || t.type === fType;
+    let matchCat = true;
+    if (fCat.startsWith("typecat:")) {
+      const rest = fCat.slice(8);
+      const sep = rest.indexOf(":");
+      matchCat = t.type === rest.slice(0, sep) && t.category === rest.slice(sep + 1);
+    }
     const matchQ = !q || t.title.toLowerCase().includes(q) || t.category.toLowerCase().includes(q);
-    return matchF && matchQ;
+    return matchType && matchCat && matchQ;
   });
   const sortOrder = $("sort").value;
   if (sortOrder === "asc") shown.sort((a, b) => a.amount - b.amount);
