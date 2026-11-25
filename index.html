@@ -38,8 +38,6 @@
     <section class="card">
       <h2>Add Transaction</h2>
       <form id="form">
-        <input type="text" id="title" placeholder="Description (e.g. Lunch)" required>
-        <input type="number" id="amount" placeholder="Amount (₹)" min="1" step="0.01" required>
         <select id="type" aria-label="Transaction type">
           <option value="expense">Expense</option>
           <option value="income">Income</option>
@@ -48,6 +46,8 @@
           <option value="" disabled selected>Select Category</option>
         </select>
         <input type="text" id="customCat" placeholder="Custom category (optional)" hidden>
+        <input type="text" id="title" placeholder="Description (e.g. Lunch)" required>
+        <input type="number" id="amount" placeholder="Amount (₹)" min="1" step="0.01" required>
         <input type="date" id="date" required>
         <button type="submit" id="submitBtn">Add Transaction</button>
       </form>
