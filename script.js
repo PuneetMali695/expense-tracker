@@ -1,7 +1,7 @@
 const $ = id => document.getElementById(id);
 const CATS = {
   expense: ["Food", "Travel", "Shopping", "Bills","Rent","EMI", "Entertainment", "Others"],
-  income: ["Salary", "Pocket Money", "Freelance", "Interest","CashBack","Business", "Bonus", "Others"]
+  income: ["Salary", "Pocket Money", "Freelance","Business", "Bonus", "Others"]
 };
 const today = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
 const curMonth = today().slice(0, 7);
